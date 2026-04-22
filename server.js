@@ -10,6 +10,7 @@ const ROOT_DIR = __dirname;
 const DATA_DIR = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
   : path.join(ROOT_DIR, "data");
+const TEMPLATE_DATA_DIR = path.join(ROOT_DIR, "data");
 const PUBLIC_DIR = path.join(ROOT_DIR, "public");
 const UPLOAD_DIR = path.join(DATA_DIR, "uploads");
 const COMMENTS_FILE = path.join(DATA_DIR, "comments.json");
@@ -58,6 +59,17 @@ async function readJson(filePath, fallback) {
 
 async function writeJson(filePath, value) {
   await fs.writeFile(filePath, JSON.stringify(value, null, 2), "utf8");
+}
+
+async function readTemplateJson(fileName, fallback) {
+  const templatePath = path.join(TEMPLATE_DATA_DIR, fileName);
+  try {
+    const raw = await fs.readFile(templatePath, "utf8");
+    const parsed = JSON.parse(raw);
+    return parsed ?? fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 function requireAdmin(req, res, next) {
@@ -434,69 +446,14 @@ app.post("/api/admin/upload", requireAdmin, upload.single("image"), async (req, 
 async function bootstrapData() {
   await fs.mkdir(DATA_DIR, { recursive: true });
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
-  await ensureFile(COMMENTS_FILE, []);
-  await ensureFile(BOOKS_FILE, [
-    {
-      id: "book-1",
-      title: "《星河边境》",
-      intro: "一名被流放的工程师，在废墟星球上重新点亮文明火种。",
-      authorName: "夜行观星人",
-      authorBio: "原创科幻写作者。这里会持续更新章节，你的每一条留言都会被看到。",
-      coverImage:
-        "https://images.unsplash.com/photo-1455885666463-9a7114f6b09f?auto=format&fit=crop&w=1200&q=80",
-      authorAvatar:
-        "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80",
-      tags: ["科幻", "废土", "成长"]
-    },
-    {
-      id: "book-2",
-      title: "《雾港手札》",
-      intro: "在终年被海雾吞没的港口，侦探与走私者共用一份真相。",
-      authorName: "墨屿",
-      authorBio: "悬疑与现实交错的故事记录者。",
-      coverImage:
-        "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-      authorAvatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80",
-      tags: ["悬疑", "港口", "都市"]
-    }
-  ]);
+  const commentTemplate = await readTemplateJson("comments.json", []);
+  const booksTemplate = await readTemplateJson("books.json", []);
+  const chaptersTemplate = await readTemplateJson("chapters.json", []);
+  await ensureFile(COMMENTS_FILE, Array.isArray(commentTemplate) ? commentTemplate : []);
+  await ensureFile(BOOKS_FILE, Array.isArray(booksTemplate) ? booksTemplate : []);
   const books = await readBooks();
   await ensureFile(SITE_FILE, books[0] || {});
-  await ensureFile(CHAPTERS_FILE, [
-    {
-      id: "1",
-      bookId: "book-1",
-      title: "第一章：流放之日",
-      content:
-        "运输舰在黑暗中震动，舱壁上的编号像一串冷淡的判决。林陌被押送到最末端座位，手腕上的磁锁每隔十秒闪一次红光。\n\n他曾是轨道城最年轻的能源工程师，现在却被冠上“违令者”的称号，送往无人记录的边境星球。窗外，母星的蓝色弧面一点点远去。\n\n在那一刻，他第一次意识到，文明也会把自己最会修灯的人，丢进最深的夜里。",
-      order: 1
-    },
-    {
-      id: "2",
-      bookId: "book-1",
-      title: "第二章：失落工厂",
-      content:
-        "登陆后的第三天，林陌在沙暴中看见了那座废弃工厂。高耸的冷却塔歪斜在地平线尽头，像一支被折断的笔。\n\n工厂地下仍有微弱电流，他沿着断裂线路一路向下，终于在控制室里找到一台古老的反应堆核心。屏幕亮起的那一秒，灰尘像被惊醒的雪。\n\n“如果你还能响，就让我也再响一次。”他对着机器低声说。",
-      order: 2
-    },
-    {
-      id: "3",
-      bookId: "book-1",
-      title: "第三章：第一束灯火",
-      content:
-        "当反应堆输出稳定后，林陌把第一段电缆接到了临时营地。夜色压得很低，风像金属摩擦一样尖锐。\n\n灯泡在三次闪烁后终于亮起，昏黄却坚定。营地里的人群沉默了两秒，接着有人鼓掌，有人流泪。\n\n那一束微弱的光，让这颗被遗弃的星球第一次像“家”一样。",
-      order: 3
-    },
-    {
-      id: "book2-1",
-      bookId: "book-2",
-      title: "第一章：雾中来信",
-      content:
-        "凌晨三点，海钟敲了七下。顾凛在码头边收到了没有署名的信封，信纸上只写着一句话：\"别相信今天靠岸的人。\"\n\n雾像潮水般漫过木桩，整座港口看起来像漂浮在空中的废城。他把信折好塞进大衣，抬头时看见远处货轮的轮廓正缓缓逼近。",
-      order: 1
-    }
-  ]);
+  await ensureFile(CHAPTERS_FILE, Array.isArray(chaptersTemplate) ? chaptersTemplate : []);
   const chapters = await readChapters();
   let migrated = false;
   const migratedChapters = chapters.map((item, idx) => {
