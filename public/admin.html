@@ -58,6 +58,16 @@
             <button id="saveChapterBtn" type="submit">保存章节</button>
           </div>
         </form>
+        <hr />
+        <h4>章节 JSON 导入</h4>
+        <form id="chapterImportForm" class="comment-form">
+          <input id="chapterImportFile" type="file" accept=".json,application/json" />
+          <select id="chapterImportMode">
+            <option value="append">追加导入（保留现有章节）</option>
+            <option value="overwrite">覆盖导入（替换当前书籍全部章节）</option>
+          </select>
+          <button id="importChapterBtn" type="submit">导入章节 JSON</button>
+        </form>
       </section>
     </main>
     <script src="./admin.js"></script>

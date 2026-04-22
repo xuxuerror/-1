@@ -27,6 +27,10 @@ const upload = multer({
   }),
   limits: { fileSize: 2 * 1024 * 1024 }
 });
+const importUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 }
+});
 
 app.use(express.json({ limit: "200kb" }));
 app.use(express.static(PUBLIC_DIR));
@@ -304,6 +308,64 @@ app.delete("/api/admin/chapters/:id", requireAdmin, async (req, res) => {
   chapters.splice(idx, 1);
   await writeJson(CHAPTERS_FILE, chapters);
   res.json({ ok: true });
+});
+
+app.post("/api/admin/chapters/import", requireAdmin, importUpload.single("file"), async (req, res) => {
+  const mode = String(req.body.mode || "append").trim();
+  const bookId = String(req.body.bookId || "").trim();
+  if (!bookId) return res.status(400).json({ message: "请选择书籍后再导入" });
+  if (!req.file) return res.status(400).json({ message: "请上传 JSON 文件" });
+  if (mode !== "append" && mode !== "overwrite") {
+    return res.status(400).json({ message: "导入模式错误" });
+  }
+
+  const books = await readBooks();
+  const exists = books.some((item) => String(item.id) === bookId);
+  if (!exists) return res.status(400).json({ message: "书籍不存在" });
+
+  let parsed;
+  try {
+    const rawText = req.file.buffer.toString("utf8");
+    parsed = JSON.parse(rawText);
+  } catch {
+    return res.status(400).json({ message: "JSON 解析失败，请检查文件内容" });
+  }
+
+  const source = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.chapters) ? parsed.chapters : null;
+  if (!source) return res.status(400).json({ message: "JSON 格式错误：应为数组或 { chapters: [] }" });
+
+  const imported = [];
+  for (let i = 0; i < source.length; i += 1) {
+    const item = source[i] || {};
+    const title = String(item.title || "").trim();
+    const content = String(item.content || "").trim();
+    if (!title || !content) {
+      return res.status(400).json({ message: `第 ${i + 1} 条缺少标题或正文` });
+    }
+    imported.push({
+      id: Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8),
+      bookId,
+      title,
+      content,
+      order: Number.isFinite(Number(item.order)) && Number(item.order) > 0 ? Math.floor(Number(item.order)) : i + 1,
+      createdAt: Date.now(),
+      publishedAt: Date.now()
+    });
+  }
+
+  const chapters = await readChapters();
+  let nextChapters;
+  if (mode === "overwrite") {
+    nextChapters = chapters.filter((item) => String(item.bookId) !== bookId).concat(imported);
+  } else {
+    const current = chapters.filter((item) => String(item.bookId) === bookId);
+    const maxOrder = current.length ? Math.max(...current.map((item) => Number(item.order || 0))) : 0;
+    const normalized = imported.map((item, idx) => ({ ...item, order: maxOrder + idx + 1 }));
+    nextChapters = chapters.concat(normalized);
+  }
+
+  await writeJson(CHAPTERS_FILE, nextChapters);
+  res.json({ ok: true, importedCount: imported.length, mode });
 });
 
 app.get("/api/comments", async (_req, res) => {

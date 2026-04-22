@@ -22,6 +22,9 @@ const chapterOrderInput = document.getElementById("chapterOrderInput");
 const chapterContentInput = document.getElementById("chapterContentInput");
 const newChapterBtn = document.getElementById("newChapterBtn");
 const deleteChapterBtn = document.getElementById("deleteChapterBtn");
+const chapterImportForm = document.getElementById("chapterImportForm");
+const chapterImportFile = document.getElementById("chapterImportFile");
+const chapterImportMode = document.getElementById("chapterImportMode");
 
 let chapterCache = [];
 let bookCache = [];
@@ -355,6 +358,47 @@ chapterForm.addEventListener("submit", async (event) => {
 
     await loadAdminChapters();
     if (!chapterId) fillChapterForm(null);
+  } catch (err) {
+    adminStatusEl.textContent = err.message;
+  }
+});
+
+chapterImportForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const bookId = bookSelect.value;
+    const file = chapterImportFile.files?.[0];
+    if (!bookId) {
+      adminStatusEl.textContent = "请先选择一本书籍。";
+      return;
+    }
+    if (!file) {
+      adminStatusEl.textContent = "请先选择 JSON 文件。";
+      return;
+    }
+    if (chapterImportMode.value === "overwrite") {
+      const ok = window.confirm("覆盖导入会清空当前书籍已有章节，确定继续吗？");
+      if (!ok) return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("bookId", bookId);
+    formData.append("mode", chapterImportMode.value);
+
+    const res = await fetch("/api/admin/chapters/import", {
+      method: "POST",
+      headers: adminHeaders(),
+      body: formData
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: "导入失败" }));
+      throw new Error(err.message || "导入失败");
+    }
+    const data = await res.json();
+    adminStatusEl.textContent = `导入成功，共 ${data.importedCount} 条。`;
+    chapterImportFile.value = "";
+    await loadAdminChapters();
   } catch (err) {
     adminStatusEl.textContent = err.message;
   }
