@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>章节阅读</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <nav class="top-nav"><a id="backLink" href="/">返回首页</a></nav>
+    <main class="chapter-page">
+      <h1 id="chapterTitle">加载中...</h1>
+      <p class="chapter-meta" id="chapterMeta"></p>
+      <section class="reader-toolbar">
+        <label>版式
+          <select id="layoutMode">
+            <option value="normal">标准</option>
+            <option value="compact">紧凑</option>
+            <option value="wide">宽屏</option>
+          </select>
+        </label>
+        <label>字体
+          <select id="fontFamily">
+            <option value="serif">明朝体</option>
+            <option value="sans">黑体</option>
+            <option value="kaiti">楷体</option>
+          </select>
+        </label>
+        <label>字号
+          <input id="fontSize" type="range" min="14" max="28" value="17" />
+        </label>
+        <label>翻页
+          <select id="pagingMode">
+            <option value="scroll">滚动阅读</option>
+            <option value="paged">分页阅读</option>
+          </select>
+        </label>
+      </section>
+      <div id="chapterPager" class="chapter-pager hidden">
+        <button id="prevPageBtn" type="button">上一页</button>
+        <span id="pageInfo">1 / 1</span>
+        <button id="nextPageBtn" type="button">下一页</button>
+      </div>
+      <article id="chapterContent" class="chapter-content"></article>
+    </main>
+    <script src="./chapter.js"></script>
+  </body>
+</html>

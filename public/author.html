@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作者作品</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <nav class="top-nav"><a href="/">返回首页</a></nav>
+    <main class="container">
+      <section class="author-card" id="authorProfileCard">
+        <img class="avatar" id="authorAvatar" src="" alt="作者头像" />
+        <div>
+          <h2 id="authorNameHeading">作者主页</h2>
+          <p id="authorBioText"></p>
+          <p class="author-stats" id="authorWorksCount"></p>
+        </div>
+      </section>
+      <section class="comment-section">
+        <h1 id="authorTitle">作者作品</h1>
+        <p class="status" id="authorStatus"></p>
+        <div id="authorBookList" class="book-grid"></div>
+      </section>
+    </main>
+    <script src="./author.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "novel-site",
+  "version": "1.0.0",
+  "description": "A lightweight novel website with anonymous comments.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "novel",
+    "comments",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}

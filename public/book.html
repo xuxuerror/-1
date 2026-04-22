@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>书籍详情</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <nav class="top-nav"><a href="/">返回首页</a></nav>
+    <header class="hero">
+      <img class="cover" id="coverImage" src="" alt="小说封面" />
+      <div class="overlay"></div>
+      <div class="hero-content">
+        <h1 id="novelTitle"></h1>
+        <p id="novelIntro"></p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="author-card">
+        <img class="avatar" id="authorAvatar" src="" alt="作者头像" />
+        <div>
+          <h2 id="authorName"></h2>
+          <p id="authorBio"></p>
+        </div>
+      </section>
+
+      <section class="chapter-list">
+        <h3>章节目录</h3>
+        <ul id="chapterList"></ul>
+      </section>
+
+      <section class="comment-section">
+        <h3>匿名评论</h3>
+        <form id="commentForm" class="comment-form">
+          <input id="nicknameInput" type="text" maxlength="24" placeholder="昵称（可空，默认匿名）" />
+          <textarea id="contentInput" maxlength="500" required placeholder="写下你的想法（最多 500 字）"></textarea>
+          <button type="submit">发布评论</button>
+        </form>
+        <p id="status" class="status"></p>
+        <ul id="commentList" class="comment-list"></ul>
+      </section>
+    </main>
+
+    <script src="./book.js"></script>
+  </body>
+</html>

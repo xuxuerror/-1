@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>小说站管理后台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <nav class="top-nav"><a href="/">返回首页</a></nav>
+    <main class="container">
+      <section class="comment-section">
+        <h3>管理员登录</h3>
+        <input id="adminPassword" type="password" placeholder="输入管理员密码" />
+        <p class="status" id="adminStatus"></p>
+      </section>
+
+      <section class="comment-section">
+        <h3>书籍资料管理</h3>
+        <form id="siteForm" class="comment-form">
+          <select id="bookSelect">
+            <option value="">请选择书籍</option>
+          </select>
+          <div class="actions-row">
+            <button id="newBookBtn" type="button">新建书籍</button>
+            <button id="saveBookBtn" type="submit">保存书籍资料</button>
+          </div>
+          <input id="titleInput" placeholder="小说标题" />
+          <textarea id="introInput" placeholder="小说简介"></textarea>
+          <input id="authorNameInput" placeholder="作者名称" />
+          <textarea id="authorBioInput" placeholder="作者介绍"></textarea>
+          <input id="tagsInput" placeholder="书籍标签（用逗号分隔，例如：科幻,废土,成长）" />
+          <input id="coverImageInput" placeholder="封面图片链接" />
+          <input id="authorAvatarInput" placeholder="作者头像链接" />
+          <label>上传封面图片（会自动填入链接）<input id="coverUpload" type="file" accept="image/*" /></label>
+          <label>上传头像图片（会自动填入链接）<input id="avatarUpload" type="file" accept="image/*" /></label>
+        </form>
+      </section>
+
+      <section class="comment-section">
+        <h3>评论审核</h3>
+        <button id="reloadCommentsBtn" type="button">刷新评论列表</button>
+        <ul id="adminCommentList" class="comment-list"></ul>
+      </section>
+
+      <section class="comment-section">
+        <h3>章节管理</h3>
+        <form id="chapterForm" class="comment-form">
+          <select id="chapterSelect">
+            <option value="">新建章节</option>
+          </select>
+          <input id="chapterTitleInput" placeholder="章节标题" />
+          <input id="chapterOrderInput" type="number" min="1" placeholder="章节序号（1,2,3...）" />
+          <textarea id="chapterContentInput" placeholder="章节正文（支持换行）"></textarea>
+          <div class="actions-row">
+            <button id="newChapterBtn" type="button">清空为新章节</button>
+            <button id="deleteChapterBtn" type="button">删除当前章节</button>
+            <button id="saveChapterBtn" type="submit">保存章节</button>
+          </div>
+        </form>
+      </section>
+    </main>
+    <script src="./admin.js"></script>
+  </body>
+</html>
