@@ -3,6 +3,9 @@ const adminStatusEl = document.getElementById("adminStatus");
 const siteForm = document.getElementById("siteForm");
 const adminCommentList = document.getElementById("adminCommentList");
 const reloadCommentsBtn = document.getElementById("reloadCommentsBtn");
+const downloadSyncBatBtn = document.getElementById("downloadSyncBatBtn");
+const markSyncedBtn = document.getElementById("markSyncedBtn");
+const syncHintEl = document.getElementById("syncHint");
 
 const titleInput = document.getElementById("titleInput");
 const introInput = document.getElementById("introInput");
@@ -28,6 +31,7 @@ const chapterImportMode = document.getElementById("chapterImportMode");
 
 let chapterCache = [];
 let bookCache = [];
+let syncedThisSession = false;
 
 function getPassword() {
   return adminPasswordEl.value.trim();
@@ -38,6 +42,18 @@ function adminHeaders(extra = {}) {
     "x-admin-password": getPassword(),
     ...extra
   };
+}
+
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function fmtTime(ts) {
@@ -402,6 +418,39 @@ chapterImportForm.addEventListener("submit", async (event) => {
   } catch (err) {
     adminStatusEl.textContent = err.message;
   }
+});
+
+downloadSyncBatBtn.addEventListener("click", () => {
+  const baseUrl = window.location.origin;
+  const bat = `@echo off
+setlocal
+cd /d "%~dp0"
+if not exist "sync-from-production.ps1" (
+  echo [ERROR] 未找到 sync-from-production.ps1，请把本文件放到项目根目录后再双击。
+  pause
+  exit /b 1
+)
+powershell -NoProfile -ExecutionPolicy Bypass -File ".\\sync-from-production.ps1" -BaseUrl "${baseUrl}"
+echo.
+echo 回流完成后请执行 git add/commit/push
+pause
+`;
+  downloadTextFile("sync-from-production.bat", bat);
+  syncHintEl.textContent =
+    "已下载 sync-from-production.bat。请将该文件放在项目根目录，与 sync-from-production.ps1 同目录后双击运行。";
+  adminStatusEl.textContent = "双击回流脚本已下载。";
+});
+
+markSyncedBtn.addEventListener("click", () => {
+  syncedThisSession = true;
+  sessionStorage.setItem("syncedThisSession", "1");
+  adminStatusEl.textContent = "已标记本次完成回流。离开后台将不再弹提醒（仅本次会话）。";
+});
+
+window.addEventListener("beforeunload", (event) => {
+  if (syncedThisSession || sessionStorage.getItem("syncedThisSession") === "1") return;
+  event.preventDefault();
+  event.returnValue = "";
 });
 
 fillBookForm(null);

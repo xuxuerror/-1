@@ -13,6 +13,13 @@
         <h3>管理员登录</h3>
         <input id="adminPassword" type="password" placeholder="输入管理员密码" />
         <p class="status" id="adminStatus"></p>
+        <div class="actions-row">
+          <button id="downloadSyncBatBtn" type="button">下载双击回流脚本(.bat)</button>
+          <button id="markSyncedBtn" type="button">本次已完成回流</button>
+        </div>
+        <p class="status" id="syncHint">
+          建议每次离开后台前先执行一次回流脚本，把线上内容同步到本地后再推送代码。
+        </p>
       </section>
 
       <section class="comment-section">

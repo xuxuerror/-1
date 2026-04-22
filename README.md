@@ -88,6 +88,36 @@ npm start
 - 内容修改：进入后台改书籍、章节、作者资料（无需改代码）。
 - 代码/UI 修改：本地改完后 `git push`，Render 自动重新部署。
 
+## 9. 线上内容一键回流到本地
+
+项目根目录提供了脚本：`sync-from-production.ps1`
+
+在 PowerShell 中执行：
+
+```powershell
+cd "D:\cursor 1\novel-site"
+.\sync-from-production.ps1
+```
+
+然后按提示输入：
+
+- 线上地址（例如 `https://你的域名`）
+- 管理员密码
+
+脚本会自动更新本地：
+
+- `data/books.json`
+- `data/chapters.json`
+- `data/comments.json`
+
+回流后提交即可：
+
+```powershell
+git add data/books.json data/chapters.json data/comments.json
+git commit -m "sync content from production"
+git push
+```
+
 这是轻量实现，适合低并发与小规模使用。如果后续你要上公网，我可以帮你升级为：
 
 - 数据库存储（SQLite/MySQL）
