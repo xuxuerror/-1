@@ -1,26 +1,26 @@
 [
-  {
-    "id": "book-1",
-    "title": "《草原草原》",
-    "intro": "草原野马磨刀霍霍向人类",
-    "authorName": "黄鱼照金",
-    "authorBio": "你也喜欢原百吗",
-    "coverImage": "/uploads/mo9xpzgk-127951.png",
-    "authorAvatar": "/uploads/mo9xob4s-692956.jpg",
-    "tags": [
-      "破镜重圆"
-    ]
-  },
-  {
-    "id": "book-2",
-    "title": "《沉沦》",
-    "intro": "一起沉沦在罪恶的爱河。",
-    "authorName": "黄鱼照金",
-    "authorBio": "你也喜欢原百吗",
-    "coverImage": "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80",
-    "authorAvatar": "/uploads/mo9xob4s-692956.jpg",
-    "tags": [
-      "不伦之爱"
-    ]
-  }
+    {
+        "id":  "book-1",
+        "title":  "《草原草原》",
+        "intro":  "草原野马磨刀霍霍向人类",
+        "authorName":  "黄鱼照金",
+        "authorBio":  "你也喜欢原百吗",
+        "coverImage":  "/uploads/mo9xpzgk-127951.png",
+        "authorAvatar":  "/uploads/mo9xob4s-692956.jpg",
+        "tags":  [
+                     "破镜重圆"
+                 ]
+    },
+    {
+        "id":  "book-2",
+        "title":  "《沉沦》",
+        "intro":  "一起沉沦在罪恶的爱河。",
+        "authorName":  "黄鱼照金",
+        "authorBio":  "你也喜欢原百吗",
+        "coverImage":  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format\u0026fit=crop\u0026w=1200\u0026q=80",
+        "authorAvatar":  "/uploads/mo9xob4s-692956.jpg",
+        "tags":  [
+                     "不伦之爱"
+                 ]
+    }
 ]
